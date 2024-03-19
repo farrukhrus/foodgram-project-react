@@ -1,10 +1,9 @@
 import base64
+import webcolors
 import uuid
 
-import webcolors
-from django.core.files.base import ContentFile
 from rest_framework import serializers
-
+from django.core.files.base import ContentFile
 from recipe.models import Subscription
 
 
