@@ -1,10 +1,10 @@
 import base64
-import webcolors
 import uuid
 
-from rest_framework import serializers
+import webcolors
 from django.core.files.base import ContentFile
 from recipe.models import Subscription
+from rest_framework import serializers
 
 
 class NameToColor(serializers.Field):
