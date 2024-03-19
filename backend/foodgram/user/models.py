@@ -1,5 +1,5 @@
-from django.db import models as dbmodels
 from django.contrib.auth.models import AbstractUser
+from django.db import models as dbmodels
 
 
 class User(AbstractUser):

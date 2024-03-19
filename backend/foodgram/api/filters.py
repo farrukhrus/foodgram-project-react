@@ -1,6 +1,6 @@
 import django_filters
 
-from recipe.models import Recipe, Favorite, Shopping
+from recipe.models import Favorite, Recipe, Shopping
 
 
 class RecipeFilter(django_filters.FilterSet):

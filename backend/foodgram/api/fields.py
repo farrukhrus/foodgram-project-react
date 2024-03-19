@@ -1,9 +1,10 @@
 import base64
-import webcolors
 import uuid
 
-from rest_framework import serializers
+import webcolors
 from django.core.files.base import ContentFile
+from rest_framework import serializers
+
 from recipe.models import Subscription
 
 
@@ -37,5 +38,4 @@ def is_sub(user, subscriber):
         return Subscription.objects.filter(
             user=user, subscriber=subscriber
         ).exists()
-    else:
-        return False
+    return False

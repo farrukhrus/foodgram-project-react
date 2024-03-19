@@ -1,21 +1,13 @@
-from rest_framework import serializers
-from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
 from django.contrib.auth import get_user_model
-from djoser.serializers import UserSerializer, UserCreateSerializer
 from django.shortcuts import get_object_or_404
+from djoser.serializers import UserCreateSerializer, UserSerializer
+from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 
-from recipe.models import (
-    Recipe,
-    Ingredient,
-    IngredientRecipe,
-    Tag,
-    TagRecipe,
-    Subscription,
-    Favorite,
-    Shopping
-)
-from .fields import NameToColor, Base64ImageField, is_sub
+from recipe.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                           Shopping, Subscription, Tag, TagRecipe)
 
+from .fields import Base64ImageField, NameToColor, is_sub
 
 User = get_user_model()
 
