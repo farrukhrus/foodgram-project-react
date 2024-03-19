@@ -2,8 +2,10 @@ FROM python:3.9
 
 WORKDIR /app
 
-COPY . .
+COPY requirements.txt .
 
 RUN pip install -r requirements.txt --no-cache-dir
 
-CMD ["gunicorn", "foodgram.wsgi:application", "--bind", "0:8080" ]
+COPY . .
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "foodgram_backend.wsgi"]
