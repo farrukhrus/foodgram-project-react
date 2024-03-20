@@ -37,5 +37,4 @@ def is_sub(user, subscriber):
         return Subscription.objects.filter(
             user=user, subscriber=subscriber
         ).exists()
-    else:
-        return False
+    return False

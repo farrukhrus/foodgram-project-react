@@ -25,7 +25,7 @@ class RecipeFilter(django_filters.FilterSet):
             return queryset.filter(
                 id__in=Favorite.objects.filter(
                     user=user
-                    ).values_list('recipe', flat=True))
+                ).values_list('recipe', flat=True))
         return queryset
 
     def filter_shopping(self, queryset, name, value):
@@ -34,7 +34,7 @@ class RecipeFilter(django_filters.FilterSet):
             return queryset.filter(
                 id__in=Shopping.objects.filter(
                     user=user
-                    ).values_list('recipe', flat=True))
+                ).values_list('recipe', flat=True))
         return queryset
 
     class Meta:
