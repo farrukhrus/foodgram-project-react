@@ -1,5 +1,3 @@
-from django.http import HttpResponse
-from django.db.models import Sum
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -21,8 +19,7 @@ from recipe.models import (
     Tag,
     Subscription,
     Favorite,
-    Shopping,
-    IngredientRecipe
+    Shopping
 )
 from .serializers import (
     RecipeReadSerializer,
@@ -35,6 +32,7 @@ from .serializers import (
 )
 from .permissions import IsAuthor
 from .filters import RecipeFilter
+from .utils import generate_shopping_cart
 
 
 User = get_user_model()
@@ -64,7 +62,7 @@ class CustomUserViewSet(UserViewSet):
     pagination_class = CustomPagination
 
     def get_permissions(self):
-        if self.action == "me":
+        if self.action == 'me':
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
@@ -141,29 +139,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def download_shopping_cart(self, request):
-        user = self.request.user
-        shopping = Shopping.objects.filter(user=user).values_list(
-            'recipe',
-            flat=True
-        )
-        lines = []
-        file_name = 'shopping_cart.txt'
-        lines.append('Список покупок:\n')
-        ingredients = IngredientRecipe.objects.filter(
-            recipe_id__in=shopping
-        ).values('ingredient').annotate(totals=Sum('amount'))
-        for ingredient in ingredients:
-            lines.append('{0} - {1}'.format(
-                Ingredient.objects.get(id=ingredient['ingredient']),
-                ingredient['totals']
-            )
-            )
-        response_content = '\n'.join(lines)
-        response = HttpResponse(response_content, content_type="text")
-        response['Content-Disposition'] = 'attachment; filename={0}'.format(
-            file_name
-        )
-        return response
+        generate_shopping_cart(self, request)
 
 
 class FavoriteViewSet(CreateDestroyViewSet):

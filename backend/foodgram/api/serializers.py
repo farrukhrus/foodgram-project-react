@@ -14,10 +14,18 @@ from recipe.models import (
     Favorite,
     Shopping
 )
-from .fields import NameToColor, Base64ImageField, is_sub
+from .fields import NameToColor, Base64ImageField
 
 
 User = get_user_model()
+
+
+def is_sub(user, subscriber):
+    if user.is_authenticated:
+        return Subscription.objects.filter(
+            user=user, subscriber=subscriber
+        ).exists()
+    return False
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -179,15 +187,15 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     def validate_ingredients(self, value):
         if not value:
             raise serializers.ValidationError(
-                'Рецепт должен содержать ингридиенты')
+                'Рецепт должен содержать ингредиенты')
         ingredients = {ingredient['ingredient__id'] for ingredient in value}
         if len(value) != len(ingredients):
             raise serializers.ValidationError(
-                f'Ингридиент не должен дублироваться: {value}')
+                f'ингредиент не должен дублироваться: {value}')
         for ingredient in ingredients:
             if not Ingredient.objects.filter(id=ingredient).exists():
                 raise serializers.ValidationError(
-                    f'Такого ингридиента не существует: {value}')
+                    f'Такого ингредиента не существует: {value}')
         return value
 
     def validate_tags(self, value):
@@ -347,7 +355,10 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         source='subscriber.last_name'
     )
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+    recipes_count = serializers.IntegerField(
+        source='recipes.count',
+        read_only=True
+    )
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -387,9 +398,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Нельзя несколько раз подписаться на одного пользователя')
         return Subscription.objects.create(user=user, subscriber=subscriber)
-
-    def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.subscriber).count()
 
     def get_is_subscribed(self, obj):
         return is_sub(obj.user, obj.subscriber)

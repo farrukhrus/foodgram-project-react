@@ -4,7 +4,6 @@ import uuid
 
 from rest_framework import serializers
 from django.core.files.base import ContentFile
-from recipe.models import Subscription
 
 
 class NameToColor(serializers.Field):
@@ -30,11 +29,3 @@ class Base64ImageField(serializers.ImageField):
             )
 
         return super().to_internal_value(data)
-
-
-def is_sub(user, subscriber):
-    if user.is_authenticated:
-        return Subscription.objects.filter(
-            user=user, subscriber=subscriber
-        ).exists()
-    return False

@@ -10,7 +10,7 @@ class RecipeFilter(django_filters.FilterSet):
     author = django_filters.NumberFilter(
         field_name='author__id',
     )
-    is_favorited = django_filters.NumberFilter(
+    is_favorited = django_filters.BooleanFilter(
         field_name='favorites',
         method='filter_favorite'
     )
@@ -20,20 +20,18 @@ class RecipeFilter(django_filters.FilterSet):
     )
 
     def filter_favorite(self, queryset, name, value):
-        user = self.request.user
         if value == 1:
             return queryset.filter(
                 id__in=Favorite.objects.filter(
-                    user=user
+                    user=self.request.user
                 ).values_list('recipe', flat=True))
         return queryset
 
     def filter_shopping(self, queryset, name, value):
-        user = self.request.user
         if value == 1:
             return queryset.filter(
                 id__in=Shopping.objects.filter(
-                    user=user
+                    user=self.request.user
                 ).values_list('recipe', flat=True))
         return queryset
 
