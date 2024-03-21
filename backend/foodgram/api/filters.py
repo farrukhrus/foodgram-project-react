@@ -11,8 +11,7 @@ class RecipeFilter(django_filters.FilterSet):
         field_name='author__id',
     )
     is_favorited = django_filters.BooleanFilter(
-        field_name='favorites',
-        method='filter_favorite'
+        field_name='is_favorited'
     )
     is_in_shopping_cart = django_filters.NumberFilter(
         field_name='shoppings',
