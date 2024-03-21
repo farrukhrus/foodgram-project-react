@@ -78,6 +78,9 @@ class Recipe(models.Model):
         verbose_name_plural = 'Рецепты'
         ordering = ('-id',)
 
+    def __str__(self):
+        return self.name
+
 
 class IngredientRecipe(models.Model):
     ingredient = models.ForeignKey(
