@@ -1,6 +1,6 @@
 import django_filters
 
-from recipe.models import Recipe, Favorite, Shopping
+from recipe.models import Recipe
 
 
 class RecipeFilter(django_filters.FilterSet):
@@ -10,30 +10,12 @@ class RecipeFilter(django_filters.FilterSet):
     author = django_filters.NumberFilter(
         field_name='author__id',
     )
-    is_favorited = django_filters.NumberFilter(
-        field_name='favorites',
-        method='filter_favorite'
+    is_favorited = django_filters.BooleanFilter(
+        field_name='favorites'
     )
-    is_in_shopping_cart = django_filters.NumberFilter(
-        field_name='shoppings',
-        method='filter_shopping'
+    is_in_shopping_cart = django_filters.BooleanFilter(
+        field_name='shoppings'
     )
-
-    def filter_favorite(self, queryset, name, value):
-        if value == 1:
-            return queryset.filter(
-                id__in=Favorite.objects.filter(
-                    user=self.request.user
-                ).values_list('recipe', flat=True))
-        return queryset
-
-    def filter_shopping(self, queryset, name, value):
-        if value == 1:
-            return queryset.filter(
-                id__in=Shopping.objects.filter(
-                    user=self.request.user
-                ).values_list('recipe', flat=True))
-        return queryset
 
     class Meta:
         model = Recipe
