@@ -196,7 +196,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 f'Ингредиент не должен дублироваться: {value}')
         for ingredient in ingredients:
-            if ingredient.get('amount') > 0:
+            if ingredient.get('amount') <= 0:
                 raise serializers.ValidationError(
                     f'Кол-во ингредиента должно быть больше 0: {value}')
         return value
