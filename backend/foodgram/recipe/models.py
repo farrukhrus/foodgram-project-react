@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 
 User = get_user_model()
@@ -90,6 +91,12 @@ class IngredientRecipe(models.Model):
     )
     amount = models.IntegerField(
         verbose_name='Кол-во',
+        validators=[
+            MinValueValidator(
+                1,
+                message=f'Кол-во должно больше или равно {1}.'
+            ),
+        ],
     )
     recipe = models.ForeignKey(
         Recipe,
