@@ -110,7 +110,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientCreateRecipeSerializer(serializers.ModelSerializer):
-    amount = serializers.IntegerField(min_value=1)
+    amount = serializers.IntegerField() # min_value=1
     id = serializers.IntegerField(min_value=1, source='ingredient__id')
 
     def validate_amount(self, value):
