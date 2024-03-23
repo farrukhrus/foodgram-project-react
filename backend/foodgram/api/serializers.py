@@ -197,14 +197,14 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients = {ingredient.get('id') for ingredient in value}
         if not ingredients:
             raise serializers.ValidationError(
-                f'Такого ингредиента не существует: {value}')
+                f'Такого ингредиента не существует')
         if len(value) != len(ingredients):
             raise serializers.ValidationError(
-                f'Ингредиент не должен дублироваться: {value}')
-        for ingredient in ingredients:
+                f'Ингредиент не должен дублироваться')
+        '''for ingredient in ingredients:
             if ingredient.get('amount') <= 0:
                 raise serializers.ValidationError(
-                    f'Кол-во ингредиента должно быть больше 0: {value}')
+                    f'Кол-во ингредиента должно быть больше 0')'''
         return value
 
     def validate_tags(self, value):
