@@ -113,6 +113,12 @@ class IngredientCreateRecipeSerializer(serializers.ModelSerializer):
     amount = serializers.IntegerField(min_value=1)
     id = serializers.IntegerField(min_value=1, source='ingredient__id')
 
+    def validate_amount(self, value):
+        if value <= 0:
+            raise serializers.ValidationError(
+                'Количество ингредиента должно быть больше 0.'
+            )
+
     class Meta:
         model = IngredientRecipe
         fields = (
@@ -128,12 +134,6 @@ class IngredientRecipeSerializer(serializers.ModelSerializer):
         source='ingredient.measurement_unit'
     )
     id = serializers.IntegerField(min_value=1, source='ingredient.id')
-
-    def validate_amount(self, value):
-        if value <= 0:
-            raise serializers.ValidationError(
-                'Количество ингредиента должно быть больше 0.'
-            )
 
     class Meta:
         model = IngredientRecipe
