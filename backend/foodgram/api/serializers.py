@@ -110,7 +110,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientCreateRecipeSerializer(serializers.ModelSerializer):
-    amount = serializers.IntegerField() # min_value=1
+    amount = serializers.IntegerField()  # min_value=1
     id = serializers.IntegerField(min_value=1, source='ingredient__id')
 
     def validate_amount(self, value):
@@ -197,10 +197,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients = {ingredient.get('id') for ingredient in value}
         if not ingredients:
             raise serializers.ValidationError(
-                f'Такого ингредиента не существует')
+                'Такого ингредиента не существует')
         if len(value) != len(ingredients):
             raise serializers.ValidationError(
-                f'Ингредиент не должен дублироваться')
+                'Ингредиент не должен дублироваться')
         '''for ingredient in ingredients:
             if ingredient.get('amount') <= 0:
                 raise serializers.ValidationError(
