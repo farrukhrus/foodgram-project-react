@@ -40,6 +40,9 @@ class Ingredient(models.Model):
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
+    def __str__(self):
+        return f'{self.name} ({self.measurement_unit})'
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -137,8 +140,6 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Избранное'
-        verbose_name_plural = 'Избранные'
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],

@@ -139,7 +139,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def download_shopping_cart(self, request):
-        generate_shopping_cart(self, request)
+        return generate_shopping_cart(self, request)
 
 
 class FavoriteViewSet(CreateDestroyViewSet):
@@ -147,7 +147,7 @@ class FavoriteViewSet(CreateDestroyViewSet):
     queryset = Favorite.objects.select_related('user').all()
 
 
-class SubsViewSet(CreateDestroyViewSet):
+class SubscriptionViewSet(CreateDestroyViewSet):
     serializer_class = SubscriptionSerializer
     queryset = Subscription.objects.select_related('user').all()
     permission_classes = [IsAuthenticated]
