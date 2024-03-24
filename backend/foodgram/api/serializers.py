@@ -200,7 +200,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 'Такого ингредиента не существует')
         if len(value) != len(ingredients):
             raise serializers.ValidationError(
-                {'ingredient': ['Ингредиент не должен дублироваться']}
+                [{'ingredient': ['Ингредиент не должен дублироваться']}]
             )
         return value
 
