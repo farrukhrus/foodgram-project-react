@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = str(os.getenv('SECRET_KEY', 'unsecured'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['farrukh.zapto.org', '127.0.0.1']
 
@@ -91,8 +91,8 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-}
-'''
+}'''
+
 
 DATABASES = {
     'default': {

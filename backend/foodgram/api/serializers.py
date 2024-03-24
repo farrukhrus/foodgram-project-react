@@ -118,6 +118,7 @@ class IngredientCreateRecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Количество ингредиента должно быть больше 0.'
             )
+        return value
 
     class Meta:
         model = IngredientRecipe
@@ -128,13 +129,13 @@ class IngredientCreateRecipeSerializer(serializers.ModelSerializer):
 
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
-    amount = serializers.IntegerField()
+    amount = serializers.IntegerField(min_value=1)
     name = serializers.CharField(source='ingredient.name')
     measurement_unit = serializers.CharField(
         source='ingredient.measurement_unit'
     )
     id = serializers.IntegerField(min_value=1, source='ingredient.id')
-
+    
     class Meta:
         model = IngredientRecipe
         fields = (
@@ -201,10 +202,15 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError(
                 'Рецепт должен содержать ингредиенты')
-        ingredients = {ingredient.get('id') for ingredient in value}
-        if not ingredients:
-            raise serializers.ValidationError(
-                'Такого ингредиента не существует')
+        ingredients = {ingredient['ingredient__id'] for ingredient in value}
+        for ingredient in ingredients:
+            if not Ingredient.objects.filter(id=ingredient).exists():
+                raise serializers.ValidationError(
+                    [
+                        {'ingredient':
+                            [f'Такого ингредиента не существует: {value}']}
+                    ]
+                )
         if len(value) != len(ingredients):
             raise serializers.ValidationError(
                 [{'ingredient': ['Ингредиент не должен дублироваться']}]
