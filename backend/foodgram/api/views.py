@@ -31,7 +31,7 @@ from .serializers import (
     ShoppingSerializer,
 )
 from .permissions import IsAuthor
-from .filters import RecipeFilter
+from .filters import RecipeFilter, IngredientFilter
 from .utils import generate_shopping_cart
 
 
@@ -108,6 +108,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_class = IngredientFilter
     pagination_class = None
     filterset_fields = ('name',)
     search_fields = ('^name',)

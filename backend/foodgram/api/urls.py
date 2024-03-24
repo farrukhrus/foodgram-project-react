@@ -16,7 +16,7 @@ from api.views import (
 router = routers.DefaultRouter()
 router.register(r'tags', TagViewSet, basename='tag')
 router.register(r'recipes', RecipeViewSet, basename='recipe')
-router.register(r'ingredients', IngredientViewSet, basename='ingredient')
+router.register('ingredients', IngredientViewSet, basename='ingredients')
 router.register(
     r'recipes/(?P<id>\d+)/favorite',
     FavoriteViewSet,
