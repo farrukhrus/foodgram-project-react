@@ -13,9 +13,11 @@ https://farrukh.zapto.org/
 
 ## Инструкция по работе с проектом:
 Для начала необходимо склонировать репозиторий:
-https://github.com/farrukhrus/foodgram-project-react.git
 ```yaml
+git clone https://github.com/farrukhrus/foodgram-project-react.git
+```
 Необходимо в рабочей директории проекта создать файл .env со своими секретами
+```yaml
 DB_ENGINE=django.db.backends.postgresql
 DB_NAME=postgres
 POSTGRES_USER=postgres
