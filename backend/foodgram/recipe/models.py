@@ -89,14 +89,8 @@ class IngredientRecipe(models.Model):
         on_delete=models.CASCADE,
         related_name='ingredient_recipe'
     )
-    amount = models.IntegerField(
-        verbose_name='Кол-во',
-        validators=[
-            MinValueValidator(
-                1,
-                message=f'Кол-во должно больше или равно {1}.'
-            ),
-        ],
+    amount = models.PositiveIntegerField(
+        verbose_name='Кол-во'
     )
     recipe = models.ForeignKey(
         Recipe,
