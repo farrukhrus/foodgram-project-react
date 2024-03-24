@@ -9,7 +9,7 @@ from api.views import (
     RecipeViewSet,
     IngredientViewSet,
     FavoriteViewSet,
-    SubsViewSet,
+    SubscriptionViewSet,
     ShoppingViewSet,
 )
 
@@ -25,7 +25,7 @@ router.register(
 router.register(r'users', CustomUserViewSet, basename='user')
 router.register(
     r'users/(?P<id>\d+)/subscribe',
-    SubsViewSet,
+    SubscriptionViewSet,
     basename='subscribe'
 )
 router.register(
