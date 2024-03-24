@@ -55,7 +55,7 @@ class Recipe(models.Model):
     text = models.TextField(
         verbose_name='Описание'
     )
-    cooking_time = models.PositiveIntegerField(
+    cooking_time = models.IntegerField(
         verbose_name='Время готовки'
     )
     ingredients = models.ManyToManyField(

@@ -110,7 +110,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientCreateRecipeSerializer(serializers.ModelSerializer):
-    amount = serializers.IntegerField()  # min_value=1
+    amount = serializers.IntegerField()
     id = serializers.IntegerField(min_value=1, source='ingredient__id')
 
     def validate_amount(self, value):
@@ -171,7 +171,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         many=True,
         required=True
     )
-    cooking_time = serializers.IntegerField(min_value=1, required=True)
+    cooking_time = serializers.IntegerField(required=True)
     author = CustomUserSerializer(
         read_only=True,
     )
@@ -190,6 +190,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'cooking_time'
         )
 
+    def validate_cooking_time(self, value):
+        if value <= 0:
+            raise serializers.ValidationError(
+                [{'recipe': ['Время готовки должно быть больше 0']}]
+            )
+        return value
+
     def validate_ingredients(self, value):
         if not value:
             raise serializers.ValidationError(
@@ -207,7 +214,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     def validate_tags(self, value):
         if not value:
             raise serializers.ValidationError(
-                'Рецепт должен содержать тег')
+                [{'tag': ['Рецепт должен содержать тег']}]
+            )
         tags = set(value)
         if len(value) != len(tags):
             raise serializers.ValidationError(
