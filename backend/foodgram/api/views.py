@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from djoser.views import UserViewSet
-
+import logging
 from recipe.models import (
     Recipe,
     Ingredient,
@@ -62,7 +62,7 @@ class CustomUserViewSet(UserViewSet):
     pagination_class = CustomPagination
 
     def get_permissions(self):
-        if self.action == 'me':
+        if self.action == "me":
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
@@ -177,6 +177,10 @@ class SubscriptionViewSet(CreateDestroyViewSet):
     @action(methods=['DELETE'], detail=True)
     def delete(self, request, *args, **kwargs):
         user = self.request.user
+        with open('output.txt', 'w') as f:
+            f.write(f'user: {user}\n')
+            f.write(f'subscirber: {self.kwargs.get("id")}')
+
         subscriber = get_object_or_404(User, id=self.kwargs.get('id'))
         if not Subscription.objects.filter(
             user=user,

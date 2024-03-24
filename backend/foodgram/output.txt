@@ -1,0 +1,2 @@
+user: admin@d.ru
+subscirber: 3
