@@ -443,12 +443,14 @@ class ShoppingSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context.get('request').user
         id = self.context['view'].kwargs.get('id')
+
         if not Recipe.objects.filter(id=id).exists():
             raise serializers.ValidationError(
                 'Рецент уже существует')
+
         recipe = Recipe.objects.get(id=id)
-        if Shopping.objects.filter(
-                user=user, recipe=recipe).exists():
-            raise serializers.ValidationError(
-                'Рецепт уже есть в списке покупок')
+
+        if Shopping.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError('Рецепт в списке покупок')
+
         return Shopping.objects.create(user=user, recipe=recipe)
