@@ -275,7 +275,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         Tag.objects.all(),
         many=True,
     )
-    cooking_time = serializers.IntegerField(read_only=True, min_value=1)
+    cooking_time = serializers.IntegerField(read_only=True)
     author = CustomUserSerializer(read_only=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
