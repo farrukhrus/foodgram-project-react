@@ -128,7 +128,7 @@ class IngredientCreateRecipeSerializer(serializers.ModelSerializer):
 
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
-    amount = serializers.IntegerField()  # min_value=1
+    amount = serializers.IntegerField()
     name = serializers.CharField(source='ingredient.name')
     measurement_unit = serializers.CharField(
         source='ingredient.measurement_unit'
@@ -412,6 +412,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         return is_sub(obj.user, obj.subscriber)
+    
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj.subscriber).count()
 
 
 class ShoppingSerializer(serializers.ModelSerializer):
