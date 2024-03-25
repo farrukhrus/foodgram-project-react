@@ -79,7 +79,7 @@ class CustomUserViewSet(UserViewSet):
             context={'request': request}
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     @action(
         detail=True,
         methods=['POST'],
@@ -110,7 +110,7 @@ class CustomUserViewSet(UserViewSet):
             subscribe.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-    
+
     @action(
         detail=False,
         methods=['GET'],
@@ -177,43 +177,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 class FavoriteViewSet(CreateDestroyViewSet):
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.select_related('user').all()
-
-
-class SubscriptionViewSet(CreateDestroyViewSet):
-    serializer_class = SubscriptionSerializer
-    queryset = Subscription.objects.select_related('user').all()
-    permission_classes = [IsAuthenticated]
-
-    def get_serializer_context(self):
-        limit = self.request.GET.get('recipes_limit', None)
-        context = super().get_serializer_context()
-        context.update({
-            'recipes_limit': limit,
-        })
-        return context
-
-    @action(methods=['DELETE'], detail=True)
-    def delete(self, request, *args, **kwargs):
-        #user = request.user.id
-        with open('output.txt', 'w') as f:
-            f.write(f'user: {vars(request)}\n')
-            f.write(f'subscirber: {self.request.user}\n')
-        user = get_object_or_404(User, id=request.user.id)
-        subscriber = get_object_or_404(User, id=self.kwargs.get('id'))
-        #with open('output.txt', 'w') as f:
-        #    f.write(f'user: {user.id}\n')
-        #    f.write(f'subscirber: {subscriber.id}\n')
-
-    
-        if not Subscription.objects.filter(
-            user=user,
-            subscriber=subscriber
-        ).exists():
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        Subscription.objects.get(user=user, subscriber=subscriber).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ShoppingViewSet(CreateDestroyViewSet):

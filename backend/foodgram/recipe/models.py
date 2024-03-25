@@ -147,6 +147,9 @@ class Favorite(models.Model):
             ),
         ]
 
+    def __str__(self):
+        return f'{self.user} : {self.recipe}'
+
 
 class Shopping(models.Model):
     user = models.ForeignKey(
@@ -170,7 +173,7 @@ class Shopping(models.Model):
 
 class Subscription(models.Model):
     user = models.ForeignKey(
-        User, 
+        User,
         related_name='following',
         on_delete=models.CASCADE
     )
@@ -187,3 +190,9 @@ class Subscription(models.Model):
                 name='unique_subscription'
             ),
         ]
+
+    def __str__(self):
+        return '{followers} подписан на {following}'.format(
+            followers=self.user.username,
+            following=self.subscriber.username,
+        )

@@ -462,6 +462,7 @@ class ShoppingSerializer(serializers.ModelSerializer):
 
         return Shopping.objects.create(user=user, recipe=recipe)
 
+
 class CreateFollowSerializer(serializers.ModelSerializer):
 
     class Meta:
