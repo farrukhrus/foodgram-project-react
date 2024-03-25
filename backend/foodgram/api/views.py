@@ -29,6 +29,7 @@ from .serializers import (
     FavoriteSerializer,
     SubscriptionSerializer,
     ShoppingSerializer,
+    CreateFollowSerializer,
 )
 from .permissions import IsAuthor
 from .filters import RecipeFilter, IngredientFilter
@@ -96,6 +97,37 @@ class CustomUserViewSet(UserViewSet):
             }
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(
+        detail=True,
+        methods=['POST'],
+        url_name='subscribe',
+        url_path='subscribe',
+        permission_classes=(IsAuthenticated,)
+    )
+    def subscribe(self, request, id):
+
+        context = {'request': request}
+        usersubscribe = get_object_or_404(User, id=id)
+        data = {
+            'user': usersubscribe.id,
+            'subscriber': request.user.id
+        }
+        serializer = CreateFollowSerializer(data=data, context=context)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @subscribe.mapping.delete
+    def destroy_subscribe(self, request, id):
+        subscribe = Subscription.objects.filter(
+            user=get_object_or_404(User, id=id),
+            subscriber=request.user.id
+        )
+        if subscribe.exists():
+            subscribe.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -163,12 +195,17 @@ class SubscriptionViewSet(CreateDestroyViewSet):
 
     @action(methods=['DELETE'], detail=True)
     def delete(self, request, *args, **kwargs):
-        user = request.user
-        subscriber = get_object_or_404(User, id=self.kwargs.get('id'))
+        #user = request.user.id
         with open('output.txt', 'w') as f:
-            f.write(f'user: {user}\n')
-            f.write(f'subscirber: {subscriber}')
+            f.write(f'user: {vars(request)}\n')
+            f.write(f'subscirber: {self.request.user}\n')
+        user = get_object_or_404(User, id=request.user.id)
+        subscriber = get_object_or_404(User, id=self.kwargs.get('id'))
+        #with open('output.txt', 'w') as f:
+        #    f.write(f'user: {user.id}\n')
+        #    f.write(f'subscirber: {subscriber.id}\n')
 
+    
         if not Subscription.objects.filter(
             user=user,
             subscriber=subscriber

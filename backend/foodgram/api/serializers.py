@@ -392,15 +392,14 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         )
 
     def get_recipes(self, obj):
-        recipes = Recipe.objects.filter(
-            author=obj.subscriber
-        ).all().order_by('-id')
+        request = self.context.get('request')
         limit = self.context.get('recipes_limit')
+        recipes = obj.recipes.all()
         if limit:
             recipes = recipes[:int(limit)]
         return RecipeShortSerializer(
             recipes,
-            many=True
+            many=True, read_only=True, context={'request': request}
         ).data
 
     def create(self, validated_data):
@@ -417,10 +416,12 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         return Subscription.objects.create(user=user, subscriber=subscriber)
 
     def get_is_subscribed(self, obj):
-        return is_sub(obj.user, obj.subscriber)
+        request = self.context.get('request')
+        return (request.user.is_authenticated
+                and obj.following.filter(subscriber=request.user).exists())
 
     def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.subscriber).count()
+        return Recipe.objects.filter(author=obj).count()
 
 
 class ShoppingSerializer(serializers.ModelSerializer):
@@ -460,3 +461,28 @@ class ShoppingSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Рецепт в списке покупок')
 
         return Shopping.objects.create(user=user, recipe=recipe)
+
+class CreateFollowSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Subscription
+        fields = ('user', 'subscriber')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscription.objects.all(),
+                fields=('user', 'subscriber'),
+                message='Невозможно подписаться, так как вы уже подписаны'
+            )
+        ]
+
+    def validate(self, data):
+        if data['user'] == data['subscriber']:
+            raise serializers.ValidationError('Невозможно подписаться '
+                                              'на самого себя')
+        return data
+
+    def to_representation(self, instance):
+        return SubscriptionSerializer(instance.user, context={
+            'request': self.context.get('request')
+        }).data

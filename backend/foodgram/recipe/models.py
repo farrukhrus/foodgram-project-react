@@ -170,7 +170,10 @@ class Shopping(models.Model):
 
 class Subscription(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE)
+        User, 
+        related_name='following',
+        on_delete=models.CASCADE
+    )
     subscriber = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
