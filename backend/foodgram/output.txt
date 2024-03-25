@@ -1,3 +1,2 @@
 user: admin@d.ru
-subscirber: 3
-id: 3 
+subscirber: user4@d.ru

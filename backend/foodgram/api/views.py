@@ -163,8 +163,12 @@ class SubscriptionViewSet(CreateDestroyViewSet):
 
     @action(methods=['DELETE'], detail=True)
     def delete(self, request, *args, **kwargs):
-        user = self.request.user
+        user = request.user
         subscriber = get_object_or_404(User, id=self.kwargs.get('id'))
+        with open('output.txt', 'w') as f:
+            f.write(f'user: {user}\n')
+            f.write(f'subscirber: {subscriber}')
+
         if not Subscription.objects.filter(
             user=user,
             subscriber=subscriber
