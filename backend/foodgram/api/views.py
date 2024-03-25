@@ -30,6 +30,7 @@ from .serializers import (
     SubscriptionSerializer,
     ShoppingSerializer,
     CreateFollowSerializer,
+    CustomUserSerializer,
 )
 from .permissions import IsAuthor
 from .filters import RecipeFilter, IngredientFilter
@@ -61,40 +62,21 @@ class CustomPagination(PageNumberPagination):
 
 class CustomUserViewSet(UserViewSet):
     pagination_class = CustomPagination
-
-    def get_permissions(self):
-        if self.action == 'me':
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
+    queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
 
     @action(
-        methods=['GET'],
         detail=False,
-        url_name='subscriptions',
-        url_path='subscriptions',
-        permission_classes=[IsAuthenticated],
-        pagination_class=CustomPagination
+        methods=['GET'],
+        url_path='me',
+        url_name='me',
+        permission_classes=(IsAuthenticated,)
     )
-    def get_subscription(self, request):
-        limit = request.GET.get('recipes_limit', None)
-        user = self.request.user
-        subscriptions = Subscription.objects.filter(user=user)
-        page = self.paginate_queryset(subscriptions)
-        if page is not None:
-            serializer = SubscriptionSerializer(
-                page,
-                many=True,
-                context={
-                    'recipes_limit': limit
-                }
-            )
-            return self.get_paginated_response(serializer.data)
-        serializer = SubscriptionSerializer(
-            Subscription.objects.filter(user=user),
-            many=True,
-            context={
-                'recipes_limit': limit
-            }
+    def me(self, request):
+        user = get_object_or_404(User, id=self.request.user.id)
+        serializer = CustomUserSerializer(
+            user,
+            context={'request': request}
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -128,6 +110,23 @@ class CustomUserViewSet(UserViewSet):
             subscribe.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(
+        detail=False,
+        methods=['GET'],
+        url_name='subscriptions',
+        url_path='subscriptions',
+        permission_classes=(IsAuthenticated,),
+    )
+    def subscriptions(self, request):
+        queryset = User.objects.filter(
+            following__subscriber=self.request.user.id
+        )
+        pages = self.paginate_queryset(queryset)
+        serializer = SubscriptionSerializer(
+            pages, many=True, context={'request': request}
+        )
+        return self.get_paginated_response(serializer.data)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
